@@ -5,8 +5,53 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RentCar.UI"
         mc:Ignorable="d"
-        Title="RentCar" Height="450" Width="800">
+        Title="RentCar" Height="900" Width="1200"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}" WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        >
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <materialDesign:ColorZone Mode="PrimaryMid" Grid.ColumnSpan="2" HorizontalAlignment="Stretch">
+            <materialDesign:PopupBox PlacementMode="BottomAndAlignCentres" HorizontalAlignment="Right" Margin="10">
+                <ListBox>
+                    <ListBoxItem>
+                        <materialDesign:PackIcon Kind="CloseCircleOutline" />
+                    </ListBoxItem>
+                </ListBox>
+
+            </materialDesign:PopupBox>
+        </materialDesign:ColorZone>
+        <Grid HorizontalAlignment="Stretch" Grid.Row="1" Background="{StaticResource PrimaryHueMidBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="326*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Background="{StaticResource PrimaryHueMidBrush}">
+                <Image Source="Assets/logofinal2.png" Stretch="Uniform" Margin="0,0,-0.4,0.4"/>
+            </Grid>
+            <ScrollViewer HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                <StackPanel x:Name="Menu" Margin="10"/>
+            </ScrollViewer>
+
+        </Grid>
+        <StackPanel x:Name="StackPanelMain" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"/>
+
     </Grid>
 </Window>
+
+

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RentCar.UI.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,31 @@ namespace RentCar.UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private MainViewModel _viewModel;
+        public MainWindow(MainViewModel viewModel)
         {
             InitializeComponent();
+            _viewModel = viewModel;
+            DataContext = _viewModel;
+            Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            _viewModel.Load(this);
+        }
+
+        internal void SwitchScreen(object sender)
+        {
+            var screen = ((UserControl)sender);
+
+            if (screen != null)
+            {
+                StackPanelMain.Children.Clear();
+                StackPanelMain.Children.Add(screen);
+
+
+            }
         }
     }
 }

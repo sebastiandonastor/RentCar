@@ -1,0 +1,157 @@
+﻿<UserControl x:Class="RentCar.UI.Views.ClienteControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:RentCar.UI.Views"
+             mc:Ignorable="d" 
+             Background="AliceBlue"
+             MaxWidth="1300"
+             >
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+                <!-- throw in some extra colour for our floating action button -->
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.Green.Named.Primary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <StackPanel Background="AliceBlue">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="300"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Row="0" >
+                <TextBlock
+                    Margin="30 30 0 0" Background="AliceBlue" HorizontalAlignment="Center"
+    Style="{StaticResource MaterialDesignHeadline3TextBlock}">
+Clientes
+                </TextBlock>
+                <DataGrid Background="{StaticResource PrimaryHueMidBrush}" Margin="30 60 30 0" Grid.Row="0" ItemsSource="{Binding Clientes}" IsReadOnly="True" AutoGenerateColumns="false" ColumnWidth="*">
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
+                        <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}"/>
+                        <DataGridTextColumn Header="Cedula" Binding="{Binding Cedula}"/>
+                        <DataGridTextColumn Header="Tipo persona" Binding="{Binding  TipoPersona.Tipo}"/>
+                        <DataGridTemplateColumn Header="Accion">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button Content="{materialDesign:PackIcon Kind=Pencil,Size=12 }" Background="#ffd600"
+                             ToolTip="Edit" Width="auto" Height="auto" Grid.Column="0" />
+                                        <Button Content="{materialDesign:PackIcon Kind=Delete, Size=12}" Background="#d50000"
+                             ToolTip="Delete" Width="auto" Height="auto" Grid.Column="1" />
+                                        <Button Content="{materialDesign:PackIcon Kind=Attachment, Size=12}" Background="Green"
+                             ToolTip="Reporte" Width="auto" Height="auto" Grid.Column="2" />
+
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+
+
+                    </DataGrid.Columns>
+
+                </DataGrid>
+
+            </StackPanel>
+            <Grid Grid.Row="1" Margin="30 100 5 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+
+
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+
+                </Grid.RowDefinitions>
+
+                <Label Content="Nombre" Grid.Row="0" Grid.Column="0"/>
+                <TextBox Padding="0" Grid.Row="1" Grid.Column="0" Margin="0 0 10 0"/>
+
+                <Label Content="Cedula" Grid.Row="0" Grid.Column="1"/>
+                <TextBox Grid.Row="1" Grid.Column="1"  Margin="0 0 10 0"/>
+
+                <Label Content="Tarjeta Credito" Grid.Row="0" Grid.Column="2"/>
+                <TextBox Grid.Row="1" Grid.Column="2" Margin="0 0 10 0"/>
+
+                <Label Content="Limite de Credito" Margin="0 25 0 0" Grid.Row="2" Grid.Column="0" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 0 10 0"/>
+
+                <Label Content="Tipo Persona" Grid.Row="2" Grid.Column="1" Margin="0 25 0 0"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" Margin="0 0 10 0" materialDesign:HintAssist.Hint="Elegir" materialDesign:ComboBoxAssist.ClassicMode="true">
+                    <ComboBoxItem Tag="1">
+                        Fisica
+                    </ComboBoxItem>
+                    <ComboBoxItem Tag="2">
+                        Juridica
+                    </ComboBoxItem>
+                </ComboBox>
+
+                <Label Content="Estado" Grid.Row="2" Grid.Column="2" Margin="0 25 0 0"/>
+                <ComboBox Grid.Row="3" Grid.Column="2" materialDesign:HintAssist.Hint="Elegir" materialDesign:ComboBoxAssist.ClassicMode="true">
+                    <ComboBoxItem Tag="true">
+                        Activo
+                    </ComboBoxItem>
+                    <ComboBoxItem Tag="false">
+                        Inactivo
+                    </ComboBoxItem>
+                </ComboBox>
+
+
+
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <materialDesign:PopupBox Style="{StaticResource MaterialDesignMultiFloatingActionDarkPopupBox}"
+                                 HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                                 Margin="32" ToolTip="Acciones">
+                    <StackPanel>
+                        <Button ToolTip="Limpiar" Background="AliceBlue">
+                            <materialDesign:PackIcon Kind="Cleaning" Height="20" Width="20" Foreground="{StaticResource PrimaryHueDarkBrush}"/>
+                        </Button>
+                        <Button ToolTip="Grabar" Background="#536DFE">
+                            <materialDesign:PackIcon Kind="ContentSave" Foreground="AliceBlue" Height="20" Width="20" />
+                        </Button>
+
+
+                    </StackPanel>
+                </materialDesign:PopupBox>
+            </Grid>
+        </Grid>
+    </StackPanel>
+
+</UserControl>
