@@ -2,7 +2,9 @@
 using RentCar.Persistence.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,11 +22,19 @@ namespace RentCar.UI.Views
     /// <summary>
     /// Interaction logic for MarcaControl.xaml
     /// </summary>
-    public partial class MarcaControl : UserControl
+    public partial class MarcaControl : UserControl, INotifyPropertyChanged
     {
+        bool isEdit = false;
         private readonly IUnitOfWork _unitOfWork;
+        private Marca _marca { get; set; }
 
-        public Marca MarcaSelected { get; set; } = new Marca();
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+        public Marca MarcaSelected { get { return _marca; } set { _marca = value; OnPropertyChanged(); estados.SelectedIndex = value.Estado ? 0 : 1; } }
         public MarcaControl(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -54,7 +64,16 @@ namespace RentCar.UI.Views
             {
                 try
                 {
-                    await _unitOfWork.Marcas.AddAsync(MarcaSelected);
+                    if (isEdit)
+                    {
+                        var entity = await _unitOfWork.Marcas.GetAsync(MarcaSelected.Id);
+                        _unitOfWork.Marcas.Updat(entity, MarcaSelected);
+                    }
+                    else
+                    {
+                        await _unitOfWork.Marcas.AddAsync(MarcaSelected);
+
+                    }
                     await _unitOfWork.CompleteAsync();
 
                 }
@@ -77,6 +96,8 @@ namespace RentCar.UI.Views
 
         void cleanSelection()
         {
+            isEdit = false;
+            MarcaSelected = new Marca();
             descripcion.Text = "";
             estados.SelectedIndex = -1;
         }
@@ -93,6 +114,30 @@ namespace RentCar.UI.Views
         private void OnClear(object sender, RoutedEventArgs e)
         {
             this.cleanSelection();
+        }
+
+
+        private async void Edit_Button_Click(object sender, RoutedEventArgs e)
+        {
+            isEdit = true;
+            var id = int.Parse(((Button)sender).Tag.ToString());
+            var entity = await _unitOfWork.Marcas.GetAsync(id);
+            MarcaSelected = entity;
+        }
+
+        private async void Delete_Button_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Seguro que desea Eliminar", "Eliminar", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                var id = int.Parse(((Button)sender).Tag.ToString());
+                var entity = await _unitOfWork.Marcas.GetAsync(id);
+                _unitOfWork.Marcas.Remove(entity);
+                await _unitOfWork.CompleteAsync();
+
+                this.LoadData();
+            }
+
         }
     }
 }

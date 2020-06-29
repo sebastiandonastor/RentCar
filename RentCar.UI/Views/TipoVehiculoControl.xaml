@@ -57,9 +57,9 @@ Tipos Vehiculos
 
                                         </Grid.ColumnDefinitions>
 
-                                        <Button Content="{materialDesign:PackIcon Kind=Pencil,Size=12 }" Background="#ffd600"
-                             ToolTip="Edit" Width="auto" Height="auto" Grid.Column="0" />
-                                        <Button Content="{materialDesign:PackIcon Kind=Delete, Size=12}" Background="#d50000"
+                                        <Button Content="{materialDesign:PackIcon Kind=Pencil,Size=12 }"  Click="Edit_Button_Click" Tag="{Binding Id}" Background="#ffd600"
+                             ToolTip="Edit" Width="auto" Height="auto" Grid.Column="0"  />
+                                        <Button Content="{materialDesign:PackIcon Kind=Delete, Size=12}" Background="#d50000" Click="Delete_Button_Click" Tag="{Binding Id}"
                              ToolTip="Delete" Width="auto" Height="auto" Grid.Column="1" />
 
 

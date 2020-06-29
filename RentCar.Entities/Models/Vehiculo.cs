@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,6 +35,7 @@ namespace RentCar.Entities.Models
 
         public Modelo Modelo { get; set; }
 
+        
         public TipoCombustible TipoCombustible { get; set; }
 
         public List<Renta> Rentas { get; set; }

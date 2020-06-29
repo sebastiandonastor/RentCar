@@ -2,7 +2,9 @@
 using RentCar.Persistence.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,12 +22,32 @@ namespace RentCar.UI.Views
     /// <summary>
     /// Interaction logic for TipoCombustibleControl.xaml
     /// </summary>
-    public partial class TipoCombustibleControl : UserControl
+    public partial class TipoCombustibleControl : UserControl, INotifyPropertyChanged
     {
+
+        bool isEdit = false;
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public TipoCombustible TipoCombustibleSelected { get; set; } = new TipoCombustible();
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public TipoCombustible _tipoCombustible { get; set; }
+        public TipoCombustible TipoCombustibleSelected
+        {
+            get { return _tipoCombustible; }
+            set
+            {
+                _tipoCombustible = value;
+                OnPropertyChanged();
+                estados.SelectedIndex = value.Estado ? 0 : 1;
+            }
+        }
         public TipoCombustibleControl(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -55,7 +77,15 @@ namespace RentCar.UI.Views
             {
                 try
                 {
-                    await _unitOfWork.TiposCombustibles.AddAsync(TipoCombustibleSelected);
+                    if (isEdit)
+                    {
+                        var entity = await _unitOfWork.TiposCombustibles.GetAsync(TipoCombustibleSelected.Id);
+                        _unitOfWork.TiposCombustibles.Update(entity, TipoCombustibleSelected);
+                    }
+                    else
+                    {
+                        await _unitOfWork.TiposCombustibles.AddAsync(TipoCombustibleSelected);
+                    }
                     await _unitOfWork.CompleteAsync();
 
                 }
@@ -79,7 +109,8 @@ namespace RentCar.UI.Views
 
         void cleanSelection()
         {
-            descripcion.Text = "";
+            isEdit = false;
+            TipoCombustibleSelected = new TipoCombustible();
             estados.SelectedIndex = -1;
         }
 
@@ -96,5 +127,29 @@ namespace RentCar.UI.Views
         {
             this.cleanSelection();
         }
+
+        private async void Edit_Button_Click(object sender, RoutedEventArgs e)
+        {
+            isEdit = true;
+            var id = int.Parse(((Button)sender).Tag.ToString());
+            var entity = await _unitOfWork.TiposCombustibles.GetAsync(id);
+            TipoCombustibleSelected = entity;
+        }
+
+        private async void Delete_Button_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Seguro que desea Eliminar", "Eliminar", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                var id = int.Parse(((Button)sender).Tag.ToString());
+                var entity = await _unitOfWork.TiposCombustibles.GetAsync(id);
+                _unitOfWork.TiposCombustibles.Remove(entity);
+                await _unitOfWork.CompleteAsync();
+
+                this.LoadData();
+            }
+
+        }
+
     }
 }

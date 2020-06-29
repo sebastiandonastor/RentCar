@@ -3,6 +3,8 @@ using RentCar.Persistence.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,13 +15,22 @@ namespace RentCar.UI.Views
     /// <summary>
     /// Interaction logic for ClienteControl.xaml
     /// </summary>
-    public partial class ClienteControl : UserControl
+    public partial class ClienteControl : UserControl, INotifyPropertyChanged
     {
 
-
+        bool isEdit = false;
+        private Cliente _cliente { get; set; }
         private readonly IUnitOfWork _unitOfWork;
 
-        public Cliente ClienteSelected { get; set; } = new Cliente();
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public Cliente ClienteSelected { get { return _cliente; } set { _cliente = value; OnPropertyChanged(); estados.SelectedIndex = value.Estado ? 0 : 1; } }
 
         public List<TipoPersona> TiposPersonas { get; set; } = new List<TipoPersona>();
 
@@ -50,8 +61,16 @@ namespace RentCar.UI.Views
             {
                 try
                 {
+                    if (isEdit)
+                    {
+                        var entity = await _unitOfWork.Clientes.GetAsync(ClienteSelected.Id);
+                        _unitOfWork.Clientes.Update(entity, ClienteSelected);
+                    }
+                    else
+                    {
+                        await _unitOfWork.Clientes.AddAsync(ClienteSelected);
 
-                    await _unitOfWork.Clientes.AddAsync(ClienteSelected);
+                    }
                     await _unitOfWork.CompleteAsync();
 
                 }
@@ -74,6 +93,7 @@ namespace RentCar.UI.Views
 
         void cleanSelection()
         {
+            isEdit = false;
             ClienteSelected = new Cliente();
             nombre.Text = "";
             cedula.Text = "";
@@ -103,5 +123,29 @@ namespace RentCar.UI.Views
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
         }
+
+        private async void Edit_Button_Click(object sender, RoutedEventArgs e)
+        {
+            isEdit = true;
+            var id = int.Parse(((Button)sender).Tag.ToString());
+            var entity = await _unitOfWork.Clientes.GetAsync(id);
+            ClienteSelected = entity;
+        }
+
+        private async void Delete_Button_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Seguro que desea Eliminar", "Eliminar", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                var id = int.Parse(((Button)sender).Tag.ToString());
+                var entity = await _unitOfWork.Clientes.GetAsync(id);
+                _unitOfWork.Clientes.Remove(entity);
+                await _unitOfWork.CompleteAsync();
+
+                this.LoadData(sender, e);
+            }
+
+        }
+
     }
 }

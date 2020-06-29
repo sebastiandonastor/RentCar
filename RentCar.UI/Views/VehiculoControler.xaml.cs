@@ -2,8 +2,10 @@
 using RentCar.Persistence.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -22,11 +24,29 @@ namespace RentCar.UI.Views
     /// <summary>
     /// Interaction logic for VehiculoControler.xaml
     /// </summary>
-    public partial class VehiculoControler : UserControl
+    public partial class VehiculoControler : UserControl, INotifyPropertyChanged
     {
+        bool isEdit = false;
         private readonly IUnitOfWork _unitOfWork;
 
-        public Vehiculo VehiculoSelected { get; set; } = new Vehiculo();
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public Vehiculo _vehiculo { get; set; }
+        public Vehiculo VehiculoSelected
+        {
+            get { return _vehiculo; }
+            set
+            {
+                _vehiculo = value;
+                OnPropertyChanged();
+                estados.SelectedIndex = value.Estado ? 0 : 1;
+            }
+        }
 
 
         public VehiculoControler(IUnitOfWork unitOfWork)
@@ -58,8 +78,16 @@ namespace RentCar.UI.Views
             {
                 try
                 {
+                    if (isEdit)
+                    {
+                        var entity = await _unitOfWork.Vehiculos.GetAsync(VehiculoSelected.Id);
+                        _unitOfWork.Vehiculos.Update(entity, VehiculoSelected);
+                    }
+                    else
+                    {
+                        await _unitOfWork.Vehiculos.AddAsync(VehiculoSelected);
 
-                    await _unitOfWork.Vehiculos.AddAsync(VehiculoSelected);
+                    }
                     await _unitOfWork.CompleteAsync();
 
                 }
@@ -82,9 +110,8 @@ namespace RentCar.UI.Views
 
         void cleanSelection()
         {
+            isEdit = false;
             VehiculoSelected = new Vehiculo();
-            descripcion.Text = "";
-            placa.Text = "";
             estados.SelectedIndex = -1;
 
         }
@@ -119,8 +146,31 @@ namespace RentCar.UI.Views
 
             }
 
+        }
+
+        private async void Edit_Button_Click(object sender, RoutedEventArgs e)
+        {
+            isEdit = true;
+            var id = int.Parse(((Button)sender).Tag.ToString());
+            var entity = await _unitOfWork.Vehiculos.GetAsync(id);
+            VehiculoSelected = entity;
+        }
+
+        private async void Delete_Button_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Seguro que desea Eliminar", "Eliminar", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                var id = int.Parse(((Button)sender).Tag.ToString());
+                var entity = await _unitOfWork.Vehiculos.GetAsync(id);
+                _unitOfWork.Vehiculos.Remove(entity);
+                await _unitOfWork.CompleteAsync();
+
+                this.LoadData(sender, e);
+            }
 
         }
+
     }
 }
 

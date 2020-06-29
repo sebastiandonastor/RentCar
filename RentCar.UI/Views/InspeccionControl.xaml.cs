@@ -159,5 +159,20 @@ namespace RentCar.UI.Views
             var entity = await _unitOfWork.Inspecciones.GetAsync(id);
             InspeccionSelected = entity;
         }
+
+        private async void Delete_Button_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Seguro que desea Eliminar", "Eliminar", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                var id = int.Parse(((Button)sender).Tag.ToString());
+                var entity = await _unitOfWork.Inspecciones.GetAsync(id);
+                _unitOfWork.Inspecciones.Remove(entity);
+                await _unitOfWork.CompleteAsync();
+
+                this.LoadData(sender, e);
+            }
+
+        }
     }
 }
