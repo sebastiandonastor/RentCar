@@ -9,5 +9,6 @@ namespace RentCar.Persistence.Interfaces
 {
     public interface IVehiculoRepository : IBaseRepository<Vehiculo>
     {
+        void Update(Vehiculo oldVehiculo, Vehiculo newVehiculo);
     }
 }

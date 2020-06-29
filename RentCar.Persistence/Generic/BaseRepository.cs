@@ -72,5 +72,15 @@ namespace RentCar.Persistence.Generic
                 Remove(entity);
             }
         }
+
+        public IEnumerable<TEntity> GetAll()
+        {
+            return context.Set<TEntity>().ToList();
+        }
+
+        public IEnumerable<TEntity> GetAll(Expression<Func<TEntity, bool>> predicate)
+        {
+            return context.Set<TEntity>().Where(predicate).ToList();
+        }
     }
 }

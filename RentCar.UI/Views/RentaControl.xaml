@@ -1,15 +1,11 @@
-﻿<UserControl x:Class="RentCar.UI.Views.ClienteControl"
+﻿<UserControl x:Class="RentCar.UI.Views.RentaControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:RentCar.UI.Views"
              mc:Ignorable="d" 
-             Background="AliceBlue"
-             MaxWidth="1300"
-             >
-
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -38,15 +34,21 @@
                 <TextBlock
                     Margin="30 30 0 0" Background="AliceBlue" HorizontalAlignment="Center"
     Style="{StaticResource MaterialDesignHeadline3TextBlock}">
-Clientes
+Rentas
                 </TextBlock>
                 <DataGrid x:Name="dataGrid" Background="{StaticResource PrimaryHueMidBrush}" Margin="30 60 30 0" Grid.Row="0"  IsReadOnly="True" AutoGenerateColumns="false" ColumnWidth="*">
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
-                        <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}"/>
-                        <DataGridTextColumn Header="Cedula" Binding="{Binding Cedula}"/>
-                        <DataGridTextColumn Header="Tipo persona" Binding="{Binding TipoPersona.Tipo}"/>
+                        <DataGridTextColumn Header="Empleado" Binding="{Binding Empleado.Nombre}"/>
+                        <DataGridTextColumn Header="Vehiculo" Binding="{Binding Vehiculo.Descripcion}"/>
+                        <DataGridTextColumn Header="Cliente" Binding="{Binding Cliente.Nombre}"/>
+                        <DataGridTextColumn Header="Fecha Renta" Binding="{Binding FechaRenta}"/>
+                        <DataGridTextColumn Header="Tipo Devolucion" Binding="{Binding FechaDevolucion}"/>
+                        <DataGridTextColumn Header="Monto Diario" Binding="{Binding MontoDiario}"/>
+                        <DataGridTextColumn Header="Cantidad de Dias" Binding="{Binding CantidadDias}"/>
+                        <DataGridTextColumn Header="Comentario" Binding="{Binding Comentario}"/>
+
                         <DataGridTemplateColumn Header="Accion">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -81,8 +83,9 @@ Clientes
                 </DataGrid>
 
             </StackPanel>
-            <Grid Grid.Row="1" Margin="30 100 5 5">
+            <Grid Grid.Row="1" Margin="30 50 5 5">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -96,33 +99,39 @@ Clientes
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
 
                 </Grid.RowDefinitions>
 
-                <Label Content="Nombre" Grid.Row="0" Grid.Column="0"/>
-                <TextBox Text="{Binding ClienteSelected.Nombre}" x:Name="nombre" Padding="0" Grid.Row="1" Grid.Column="0" Margin="0 0 10 0"/>
 
-                <Label Content="Cedula" Grid.Row="0" Grid.Column="1"/>
-                <TextBox x:Name="cedula" Text="{Binding ClienteSelected.Cedula}" Grid.Row="1" Grid.Column="1"  Margin="0 0 10 0"/>
-
-                <Label Content="Tarjeta Credito" Grid.Row="0" Grid.Column="2"/>
-                <TextBox x:Name="tarjetaCredito" Text="{Binding ClienteSelected.NoTarjetaCr}" Grid.Row="1" Grid.Column="2" Margin="0 0 10 0" PreviewTextInput="NumberValidationTextBox"/>
-
-                <Label Content="Limite de Credito" Margin="0 25 0 0" Grid.Row="2" Grid.Column="0" />
-                <TextBox x:Name="limiteCredito" Text="{Binding ClienteSelected.LimiteCredito}" Grid.Row="3" Grid.Column="0" Margin="0 0 10 0" PreviewTextInput="NumberValidationTextBox"/>
-
-                <Label Content="Tipo Persona" Grid.Row="2" Grid.Column="1" Margin="0 25 0 0"/>
-                <ComboBox Name="tipoPersonaCombox" Grid.Row="3" Grid.Column="1" materialDesign:HintAssist.Hint="Elegir" 
+                <Label Content="Empleado" Grid.Row="0" Grid.Column="0" Margin="0 25 0 0"/>
+                <ComboBox Name="empleadoCombox" Grid.Row="1" Grid.Column="0" Margin="0 0 10 0" materialDesign:HintAssist.Hint="Elegir" 
                           materialDesign:ComboBoxAssist.ClassicMode="true"
-                          ItemsSource="{Binding TiposPersonas}"
-                          SelectedValue="{Binding ClienteSelected.IdTipoPersona}"
-                          DisplayMemberPath="Tipo"   
+                          SelectedValue="{Binding RentaSelected.IdEmpleado}"
+                          DisplayMemberPath="Nombre"   
+                          SelectedValuePath="Id"
+                          />
+
+                <Label Content="Cliente" Grid.Row="0" Grid.Column="1" Margin="0 25 0 0"/>
+                <ComboBox Name="clienteCombox" Grid.Row="1" Grid.Column="1" Margin="0 0 10 0" materialDesign:HintAssist.Hint="Elegir" 
+                          materialDesign:ComboBoxAssist.ClassicMode="true"
+                          SelectedValue="{Binding RentaSelected.IdCliente}"
+                          DisplayMemberPath="Nombre"   
+                          SelectedValuePath="Id"
+                          />
+
+                <Label Content="Vehiculo" Grid.Row="0" Grid.Column="2" Margin="0 25 0 0"/>
+                <ComboBox Name="vehiculoCombox" Grid.Row="1" Grid.Column="2" Margin="0 0 10 0" materialDesign:HintAssist.Hint="Elegir" 
+                          materialDesign:ComboBoxAssist.ClassicMode="true"
+                          SelectedValue="{Binding RentaSelected.IdVehiculo}"
+                          DisplayMemberPath="Descripcion"   
                           SelectedValuePath="Id"
                           />
 
 
-                <Label Content="Estado" Grid.Row="2" Grid.Column="2" Margin="0 25 0 0"/>
-                <ComboBox Name="estados" Grid.Row="3" Grid.Column="2" materialDesign:HintAssist.Hint="Elegir" materialDesign:ComboBoxAssist.ClassicMode="true"  SelectionChanged="ComboBox_SelectionChanged">
+                <Label Content="Estado" Grid.Row="0" Grid.Column="3" Margin="0 25 0 0"/>
+                <ComboBox Name="estados" Grid.Row="1" Grid.Column="3" materialDesign:HintAssist.Hint="Elegir" materialDesign:ComboBoxAssist.ClassicMode="true"  SelectionChanged="ComboBox_SelectionChanged">
                     <ComboBoxItem Tag="true">
                         Activo
                     </ComboBoxItem>
@@ -133,12 +142,41 @@ Clientes
 
 
 
+                <Label Content="Fecha Renta" Grid.Row="2" Grid.Column="0" Margin="0 25 0 0"/>
+                <DatePicker Grid.Row="3" Grid.Column="0" Margin="0 0 10 0" 
+                 Text="{Binding RentaSelected.FechaRenta,Mode=TwoWay}"
+                 Name="fechaRenta"
+                 Width="auto"
+                 materialDesign:HintAssist.Hint="Ingresar Fecha" Language="es" />
+
+
+                <Label Content="Fecha Devolucion" Grid.Row="2" Grid.Column="1" Margin="0 25 0 0"/>
+                <DatePicker Grid.Row="3" Grid.Column="1" Margin="0 0 10 0" 
+                 Text="{Binding RentaSelected.FechaDevolucion,Mode=TwoWay}"
+                 Name="fechaDevolucion"
+                 Width="auto"
+                 materialDesign:HintAssist.Hint="Ingresar Fecha" Language="es" />
+
+
+                <Label Content="Monto Diario" Margin="0 25 0 0" Grid.Row="2" Grid.Column="2" />
+                <TextBox x:Name="montoDiario" Text="{Binding RentaSelected.MontoDiario}" Grid.Row="3" Grid.Column="2" Margin="0 0 10 0" PreviewTextInput="NumberValidationTextBox"/>
+
+                <Label Content="Cantidad Dias" Margin="0 25 0 0" Grid.Row="2" Grid.Column="3" />
+                <TextBox x:Name="cantidadDias" Text="{Binding RentaSelected.CantidadDias}" Grid.Row="3" Grid.Column="3" Margin="0 0 10 0" PreviewTextInput="NumberValidationTextBox"/>
+
+                <Label Content="Comentarios" Margin="0 25 0 0" Grid.Row="4" Grid.Column="0" />
+                <TextBox x:Name="comentario" Text="{Binding RentaSelected.Comentario}" Grid.Row="5" Grid.Column="0" Margin="0 0 10 0"/>
+
+
+
+
+
 
             </Grid>
 
             <Grid Grid.Row="2">
                 <materialDesign:PopupBox Style="{StaticResource MaterialDesignMultiFloatingActionDarkPopupBox}"
-                                 HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                                 HorizontalAlignment="Right" VerticalAlignment="Top" 
                                  Margin="32" ToolTip="Acciones">
                     <StackPanel>
                         <Button ToolTip="Limpiar" Background="AliceBlue" Click="OnClear">

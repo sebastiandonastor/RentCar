@@ -2,56 +2,60 @@
 using RentCar.Persistence.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 namespace RentCar.UI.Views
 {
     /// <summary>
-    /// Interaction logic for ClienteControl.xaml
+    /// Interaction logic for TipoCombustibleControl.xaml
     /// </summary>
-    public partial class ClienteControl : UserControl
+    public partial class TipoCombustibleControl : UserControl
     {
-
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public Cliente ClienteSelected { get; set; } = new Cliente();
-
-        public List<TipoPersona> TiposPersonas { get; set; } = new List<TipoPersona>();
-
-        public ClienteControl(IUnitOfWork unitOfWork)
+        public TipoCombustible TipoCombustibleSelected { get; set; } = new TipoCombustible();
+        public TipoCombustibleControl(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
             InitializeComponent();
+            LoadData();
             this.DataContext = this;
-            this.Loaded += LoadData;
 
         }
 
 
-        void LoadData(object sender, RoutedEventArgs e)
+        void LoadData()
         {
-            dataGrid.ItemsSource = _unitOfWork.Clientes.GetAll();
-            tipoPersonaCombox.ItemsSource = _unitOfWork.TiposPersonas.GetAll();
+
+            var tiposCombustibles = _unitOfWork.TiposCombustibles.GetAll();
+            dataGrid.ItemsSource = tiposCombustibles.ToList();
 
         }
 
         private async void onSave(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrWhiteSpace(ClienteSelected.Nombre))
+            if (String.IsNullOrWhiteSpace(TipoCombustibleSelected.Descripcion))
             {
                 MessageBox.Show("Por favor ingrese una descripcion valida", "Error");
+
             }
             else
             {
                 try
                 {
-
-                    await _unitOfWork.Clientes.AddAsync(ClienteSelected);
+                    await _unitOfWork.TiposCombustibles.AddAsync(TipoCombustibleSelected);
                     await _unitOfWork.CompleteAsync();
 
                 }
@@ -64,31 +68,26 @@ namespace RentCar.UI.Views
                 {
 
                     cleanSelection();
-                    LoadData(sender, e);
+                    LoadData();
                 }
 
             }
+
 
 
         }
 
         void cleanSelection()
         {
-            ClienteSelected = new Cliente();
-            nombre.Text = "";
-            cedula.Text = "";
-            tarjetaCredito.Text = "";
-            limiteCredito.Text = "";
-
+            descripcion.Text = "";
             estados.SelectedIndex = -1;
-
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (estados.SelectedItem != null)
             {
-                ClienteSelected.Estado = bool.Parse(((ComboBoxItem)estados.SelectedItem).Tag.ToString());
+                TipoCombustibleSelected.Estado = bool.Parse(((ComboBoxItem)estados.SelectedItem).Tag.ToString());
 
             }
         }
@@ -96,12 +95,6 @@ namespace RentCar.UI.Views
         private void OnClear(object sender, RoutedEventArgs e)
         {
             this.cleanSelection();
-        }
-
-        public void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9]+");
-            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }

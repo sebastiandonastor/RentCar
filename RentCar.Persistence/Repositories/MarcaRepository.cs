@@ -18,5 +18,10 @@ namespace RentCar.Persistence.Repositories
 
         public RentCarContext _context { get { return context; } }
 
+        public void Updat(Marca oldMarca, Marca recentMarca)
+        {
+            oldMarca.Estado = recentMarca.Estado;
+            oldMarca.Description = recentMarca.Description;
+        }
     }
 }

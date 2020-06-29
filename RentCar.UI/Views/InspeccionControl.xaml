@@ -1,0 +1,222 @@
+﻿<UserControl x:Class="RentCar.UI.Views.InspeccionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RentCar.UI.Views"
+             mc:Ignorable="d"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+                <!-- throw in some extra colour for our floating action button -->
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.Green.Named.Primary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <StackPanel Background="AliceBlue">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="300"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Row="0" >
+                <TextBlock
+                    Margin="30 30 0 0" Background="AliceBlue" HorizontalAlignment="Center"
+    Style="{StaticResource MaterialDesignHeadline3TextBlock}">
+Inspecciones
+                </TextBlock>
+                <DataGrid x:Name="dataGrid" Background="{StaticResource PrimaryHueMidBrush}" Margin="30 60 30 0" Grid.Row="0"  IsReadOnly="True" AutoGenerateColumns="false" ColumnWidth="*">
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
+                        <DataGridTextColumn Header="Empleado" Binding="{Binding Empleado.Nombre}"/>
+                        <DataGridTextColumn Header="Vehiculo" Binding="{Binding Vehiculo.Descripcion}"/>
+                        <DataGridTextColumn Header="Cliente" Binding="{Binding Cliente.Nombre}"/>
+                        <DataGridCheckBoxColumn Header="Ralladura" Binding="{Binding TieneRalladura}"/>
+                        <DataGridTextColumn Header="Cantidad Combustible" Binding="{Binding CantidadCombustible}"/>
+                        <DataGridCheckBoxColumn Header="Goma Respuesta" Binding="{Binding TieneGomaRespuesta}"/>
+                        <DataGridCheckBoxColumn Header="Gato" Binding="{Binding TieneGato}"/>
+                        <DataGridCheckBoxColumn Header="Roturas Cristal" Binding="{Binding TieneRoturasCristal}"/>
+
+                        <DataGridTemplateColumn Header="Accion">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button Content="{materialDesign:PackIcon Kind=Pencil,Size=12 }" Background="#ffd600" Click="Edit_Button_Click" Tag="{Binding Id}"
+                             ToolTip="Edit" Width="auto" Height="auto" Grid.Column="0" />
+                                        <Button Content="{materialDesign:PackIcon Kind=Delete, Size=12}" Background="#d50000"
+                             ToolTip="Delete" Width="auto" Height="auto" Grid.Column="1" />
+                                        <Button Content="{materialDesign:PackIcon Kind=Attachment, Size=12}" Background="Green"
+                             ToolTip="Reporte" Width="auto" Height="auto" Grid.Column="2" />
+
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+
+
+                    </DataGrid.Columns>
+
+                </DataGrid>
+
+            </StackPanel>
+            <Grid Grid.Row="1" Margin="30 50 5 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+
+
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+
+                </Grid.RowDefinitions>
+
+
+                <Label Content="Empleado" Grid.Row="0" Grid.Column="0" Margin="0 25 0 0"/>
+                <ComboBox Name="empleadoCombox" Grid.Row="1" Grid.Column="0" Margin="0 0 10 0" materialDesign:HintAssist.Hint="Elegir" 
+                          materialDesign:ComboBoxAssist.ClassicMode="true"
+                          SelectedValue="{Binding InspeccionSelected.IdEmpleado,  TargetNullValue=''}"
+                          DisplayMemberPath="Nombre"   
+                          SelectedValuePath="Id"
+                          />
+
+                <Label Content="Cliente" Grid.Row="0" Grid.Column="1" Margin="0 25 0 0"/>
+                <ComboBox Name="clienteCombox" Grid.Row="1" Grid.Column="1" Margin="0 0 10 0" materialDesign:HintAssist.Hint="Elegir" 
+                          materialDesign:ComboBoxAssist.ClassicMode="true"
+                          SelectedValue="{Binding InspeccionSelected.IdCliente, TargetNullValue=''}"
+                          DisplayMemberPath="Nombre"   
+                          SelectedValuePath="Id"
+                          />
+
+                <Label Content="Vehiculo" Grid.Row="0" Grid.Column="2" Margin="0 25 0 0"/>
+                <ComboBox Name="vehiculoCombox" Grid.Row="1" Grid.Column="2" Margin="0 0 10 0" materialDesign:HintAssist.Hint="Elegir" 
+                          materialDesign:ComboBoxAssist.ClassicMode="true"
+                          SelectedValue="{Binding InspeccionSelected.IdVehiculo,  TargetNullValue=''}"
+                          DisplayMemberPath="Descripcion"   
+                          SelectedValuePath="Id"
+                          />
+
+
+                <Label Content="Estado" Grid.Row="0" Grid.Column="3" Margin="0 25 0 0"/>
+                <ComboBox Name="estados" Grid.Row="1" Grid.Column="3" materialDesign:HintAssist.Hint="Elegir" 
+                          materialDesign:ComboBoxAssist.ClassicMode="true"  SelectionChanged="ComboBox_SelectionChanged" SelectedValuePath="Content" SelectedValue="{Binding InspeccionSelected.Estado, Mode=TwoWay}">
+                    <ComboBoxItem Tag="true">
+                        Activo
+                    </ComboBoxItem>
+                    <ComboBoxItem Tag="false">
+                        Inactivo
+                    </ComboBoxItem>
+                </ComboBox>
+
+
+
+
+                <Label Content="¿Tiene Rotura Cristal?"  Grid.Row="2" Grid.Column="0" Margin="0 25 0 0"/>
+                <CheckBox  Grid.Row="3" Grid.Column="0" Margin="0 0 10 0" HorizontalAlignment="Center"
+                 IsChecked="{Binding InspeccionSelected.TieneRoturasCristal,Mode=TwoWay}"
+                 Name="tieneRoturaCristal"
+                 Width="auto"/>
+
+                <Label Content="¿Tiene Ralladura?" Grid.Row="2" Grid.Column="1"  Margin="0 25 0 0"/>
+                <CheckBox Grid.Row="3" Grid.Column="1" Margin="0 0 10 0" HorizontalAlignment="Center"
+                 IsChecked="{Binding InspeccionSelected.TieneRalladura,Mode=TwoWay}"
+                 Name="tieneRalladura"
+                 Width="auto"/>
+
+
+                <Label Content="¿Tiene Goma Respuesta?" Grid.Row="2" Grid.Column="2" Margin="0 25 0 0"/>
+                <CheckBox Grid.Row="3" Grid.Column="2" Margin="0 0 10 0" HorizontalAlignment="Center"
+                 IsChecked="{Binding InspeccionSelected.TieneGomaRespuesta,Mode=TwoWay}"
+                 Name="tieneGomaRespuesta"
+                 Width="auto"/>
+
+
+                <Label Content="¿Tiene Gato?" Grid.Row="2" Grid.Column="3" Margin="0 25 0 0"/>
+                <CheckBox Grid.Row="3" Grid.Column="3" Margin="0 0 10 0" HorizontalAlignment="Center"
+                 IsChecked="{Binding InspeccionSelected.TieneGato,Mode=TwoWay, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                 Name="tieneGato"
+                 Width="auto"/>
+
+                <Label Content="Cantidad Combustible" Grid.Row="4" Grid.Column="1" Margin="0 25 0 0"/>
+                <ComboBox Name="cantidadCombustible" Grid.Row="5" Grid.Column="1" materialDesign:HintAssist.Hint="Elegir" materialDesign:ComboBoxAssist.ClassicMode="true" 
+                        SelectionChanged="cantidadCombustible_SelectionChanged"  SelectedValuePath="Content" SelectedValue="{Binding InspeccionSelected.CantidadCombustible, Mode=TwoWay}">
+                    <ComboBoxItem>
+                        1/4
+                    </ComboBoxItem>
+                    <ComboBoxItem >
+                        1/2
+                    </ComboBoxItem>
+                    <ComboBoxItem >
+                        3/4
+                    </ComboBoxItem>
+                    <ComboBoxItem >
+                        Lleno
+                    </ComboBoxItem>
+                </ComboBox>
+
+
+                <Label Content="Fecha" Grid.Row="4" Grid.Column="0" Margin="0 25 0 0"/>
+                <DatePicker Grid.Row="5" Grid.Column="0" Margin="0 0 10 0" 
+                 Text="{Binding InspeccionSelected.Fecha,Mode=TwoWay}"
+                 Name="fecha"
+                 Width="auto"
+                 materialDesign:HintAssist.Hint="Ingresar Fecha" Language="es" />
+
+
+
+
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <materialDesign:PopupBox Style="{StaticResource MaterialDesignMultiFloatingActionDarkPopupBox}"
+                                 HorizontalAlignment="Right" VerticalAlignment="Top" 
+                                 Margin="32" ToolTip="Acciones">
+                    <StackPanel>
+                        <Button ToolTip="Limpiar" Background="AliceBlue" Click="OnClear">
+                            <materialDesign:PackIcon Kind="Cleaning" Height="20" Width="20" Foreground="{StaticResource PrimaryHueDarkBrush}"/>
+                        </Button>
+                        <Button ToolTip="Grabar" Background="#536DFE" Click="onSave">
+                            <materialDesign:PackIcon Kind="ContentSave" Foreground="AliceBlue" Height="20" Width="20" />
+                        </Button>
+
+
+                    </StackPanel>
+                </materialDesign:PopupBox>
+            </Grid>
+        </Grid>
+    </StackPanel>
+
+</UserControl>

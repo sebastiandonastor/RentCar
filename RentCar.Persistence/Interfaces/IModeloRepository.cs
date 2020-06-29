@@ -9,5 +9,7 @@ namespace RentCar.Persistence.Interfaces
 {
     public interface IModeloRepository : IBaseRepository<Modelo>
     {
+        void Update(Modelo oldModelo, Modelo recentModelo);
+        List<Modelo> GetModelosWithMarcas();
     }
 }

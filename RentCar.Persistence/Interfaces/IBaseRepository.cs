@@ -10,6 +10,9 @@ namespace RentCar.Persistence.Interfaces
 
     public interface IBaseRepository<TEntity>
     {
+        IEnumerable<TEntity> GetAll();
+        IEnumerable<TEntity> GetAll(Expression<Func<TEntity, bool>> predicate);
+
         Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> GetAsync(int id);
 

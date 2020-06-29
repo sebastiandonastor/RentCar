@@ -9,5 +9,6 @@ namespace RentCar.Persistence.Interfaces
 {
     public interface IMarcaRepository : IBaseRepository<Marca>
     {
+        void Updat(Marca oldMarca, Marca recentMarca);
     }
 }

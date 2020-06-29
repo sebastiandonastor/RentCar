@@ -1,10 +1,8 @@
 ﻿using Autofac;
+using Persistence.Generic;
+using RentCar.DAL.SQL;
+using RentCar.Persistence.Interfaces;
 using RentCar.UI.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RentCar.UI.Startup
 {
@@ -15,6 +13,9 @@ namespace RentCar.UI.Startup
             var builder = new ContainerBuilder();
             builder.RegisterType<MainWindow>().AsSelf();
             builder.RegisterType<MainViewModel>().AsSelf();
+            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>();
+            builder.RegisterType<RentCarContext>().AsSelf();
+
             return builder.Build();
         }
     }

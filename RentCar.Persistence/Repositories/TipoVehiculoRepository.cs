@@ -18,5 +18,11 @@ namespace RentCar.Persistence.Repositories
 
         public RentCarContext _context { get { return context; } }
 
+        public void Update(TipoVehiculo oldTipoVehiculo, TipoVehiculo newTipoVehiculo)
+        {
+            oldTipoVehiculo.Descripcion = newTipoVehiculo.Descripcion;
+            oldTipoVehiculo.Estado = newTipoVehiculo.Estado;
+
+        }
     }
 }

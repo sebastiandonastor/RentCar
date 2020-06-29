@@ -2,28 +2,33 @@
 using RentCar.Persistence.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 namespace RentCar.UI.Views
 {
     /// <summary>
-    /// Interaction logic for ClienteControl.xaml
+    /// Interaction logic for RentaControl.xaml
     /// </summary>
-    public partial class ClienteControl : UserControl
+    public partial class RentaControl : UserControl
     {
-
-
         private readonly IUnitOfWork _unitOfWork;
 
-        public Cliente ClienteSelected { get; set; } = new Cliente();
+        public Renta RentaSelected { get; set; } = new Renta() { FechaRenta = DateTime.Now };
 
-        public List<TipoPersona> TiposPersonas { get; set; } = new List<TipoPersona>();
 
-        public ClienteControl(IUnitOfWork unitOfWork)
+        public RentaControl(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
             InitializeComponent();
@@ -35,23 +40,26 @@ namespace RentCar.UI.Views
 
         void LoadData(object sender, RoutedEventArgs e)
         {
-            dataGrid.ItemsSource = _unitOfWork.Clientes.GetAll();
-            tipoPersonaCombox.ItemsSource = _unitOfWork.TiposPersonas.GetAll();
+            dataGrid.ItemsSource = _unitOfWork.Rentas.GetAll();
+            vehiculoCombox.ItemsSource = _unitOfWork.Vehiculos.GetAll();
+            clienteCombox.ItemsSource = _unitOfWork.Clientes.GetAll();
+            empleadoCombox.ItemsSource = _unitOfWork.Empleados.GetAll();
 
         }
 
         private async void onSave(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrWhiteSpace(ClienteSelected.Nombre))
+            if (RentaSelected.MontoDiario <= 0)
             {
-                MessageBox.Show("Por favor ingrese una descripcion valida", "Error");
+                MessageBox.Show("Por favor ingrese una Monto Diario valida", "Error");
             }
             else
             {
                 try
                 {
 
-                    await _unitOfWork.Clientes.AddAsync(ClienteSelected);
+                    RentaSelected.FechaDevolucion = DateTime.Parse(fechaDevolucion.Text);
+                    await _unitOfWork.Rentas.AddAsync(RentaSelected);
                     await _unitOfWork.CompleteAsync();
 
                 }
@@ -74,12 +82,9 @@ namespace RentCar.UI.Views
 
         void cleanSelection()
         {
-            ClienteSelected = new Cliente();
-            nombre.Text = "";
-            cedula.Text = "";
-            tarjetaCredito.Text = "";
-            limiteCredito.Text = "";
-
+            RentaSelected = new Renta();
+            montoDiario.Text = "";
+            cantidadDias.Text = "";
             estados.SelectedIndex = -1;
 
         }
@@ -88,7 +93,7 @@ namespace RentCar.UI.Views
         {
             if (estados.SelectedItem != null)
             {
-                ClienteSelected.Estado = bool.Parse(((ComboBoxItem)estados.SelectedItem).Tag.ToString());
+                RentaSelected.Estado = bool.Parse(((ComboBoxItem)estados.SelectedItem).Tag.ToString()) ? 1 : 0;
 
             }
         }
@@ -103,5 +108,7 @@ namespace RentCar.UI.Views
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
         }
+
+
     }
 }

@@ -9,5 +9,6 @@ namespace RentCar.Persistence.Interfaces
 {
     public interface IClienteRepository : IBaseRepository<Cliente>
     {
+        void Update(Cliente oldCLiente, Cliente recentCliente);
     }
 }

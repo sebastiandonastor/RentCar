@@ -9,5 +9,7 @@ namespace RentCar.Persistence.Interfaces
 {
     public interface IInspeccionRepository : IBaseRepository<Inspeccion>
     {
+
+        void Update(Inspeccion oldInspeccion, Inspeccion newInspeccion);
     }
 }

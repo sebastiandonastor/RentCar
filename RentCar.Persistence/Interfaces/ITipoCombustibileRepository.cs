@@ -9,5 +9,6 @@ namespace RentCar.Persistence.Interfaces
 {
     public interface ITipoCombustibileRepository : IBaseRepository<TipoCombustible>
     {
+        void Update(TipoCombustible oldTipoCombustible, TipoCombustible recentTipoCombustible);
     }
 }

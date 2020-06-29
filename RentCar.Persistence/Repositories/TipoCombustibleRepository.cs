@@ -18,5 +18,10 @@ namespace RentCar.Persistence.Repositories
 
         public RentCarContext _context { get { return context; } }
 
+        public void Update(TipoCombustible oldTipoCombustible, TipoCombustible recentTipoCombustible)
+        {
+            oldTipoCombustible.Estado = recentTipoCombustible.Estado;
+            oldTipoCombustible.Descripcion = recentTipoCombustible.Descripcion;
+        }
     }
 }

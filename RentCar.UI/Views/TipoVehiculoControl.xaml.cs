@@ -1,17 +1,13 @@
-﻿using System;
+﻿using MaterialDesignThemes.Wpf;
+using RentCar.Entities.Models;
+using RentCar.Persistence.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace RentCar.UI.Views
 {
@@ -20,9 +16,78 @@ namespace RentCar.UI.Views
     /// </summary>
     public partial class TipoVehiculoControl : UserControl
     {
-        public TipoVehiculoControl()
+        private readonly IUnitOfWork _unitOfWork;
+
+        public TipoVehiculo TipoVehiculoSelected { get; set; } = new TipoVehiculo();
+        public TipoVehiculoControl(IUnitOfWork unitOfWork)
         {
+            _unitOfWork = unitOfWork;
             InitializeComponent();
+            LoadData();
+            this.DataContext = this;
+
+        }
+
+
+        void LoadData()
+        {
+
+            var tiposVehiculos = _unitOfWork.TiposVehiculos.GetAll();
+            dataGrid.ItemsSource = tiposVehiculos.ToList();
+
+        }
+
+        private async void onSave(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(TipoVehiculoSelected.Descripcion))
+            {
+                MessageBox.Show("Por favor ingrese una descripcion valida", "Error");
+
+            }
+            else
+            {
+                try
+                {
+                    await _unitOfWork.TiposVehiculos.AddAsync(TipoVehiculoSelected);
+                    await _unitOfWork.CompleteAsync();
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                finally
+                {
+
+                    cleanSelection();
+                    LoadData();
+                }
+
+            }
+
+
+
+        }
+
+        void cleanSelection()
+        {
+            descripcion.Text = "";
+            estados.SelectedIndex = -1;
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (estados.SelectedItem != null)
+            {
+                TipoVehiculoSelected.Estado = bool.Parse(((ComboBoxItem)estados.SelectedItem).Tag.ToString());
+
+            }
+        }
+
+        private void OnClear(object sender, RoutedEventArgs e)
+        {
+            this.cleanSelection();
         }
     }
 }

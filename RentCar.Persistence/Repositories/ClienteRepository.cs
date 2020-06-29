@@ -17,5 +17,15 @@ namespace RentCar.Persistence.Repositories
         }
         public RentCarContext _context { get { return context; } }
 
+        public void Update(Cliente oldCLiente, Cliente recentCliente)
+        {
+
+            oldCLiente.Estado = recentCliente.Estado;
+            oldCLiente.IdTipoPersona = recentCliente.IdTipoPersona;
+            oldCLiente.LimiteCredito = recentCliente.LimiteCredito;
+            oldCLiente.Cedula = recentCliente.Cedula;
+            oldCLiente.Nombre = recentCliente.Nombre;
+            oldCLiente.NoTarjetaCr = recentCliente.NoTarjetaCr;
+        }
     }
 }
