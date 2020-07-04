@@ -4,7 +4,9 @@ using RentCar.Persistence.Generic;
 using RentCar.Persistence.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,6 +31,19 @@ namespace RentCar.Persistence.Repositories
             oldVehiculo.Chasis = newVehiculo.Chasis;
             oldVehiculo.Descripcion = newVehiculo.Descripcion;
             oldVehiculo.Estado = newVehiculo.Estado;
+
+        }
+
+        public List<Vehiculo> GetPaginatedCase(int skip, int take = 5, Expression<Func<Vehiculo, bool>> predicate = null)
+        {
+            if (predicate == null)
+                return _context.Vehiculos.Include(v => v.Modelo).OrderByDescending(v => v.Id).Skip(skip).Take(take).ToList();
+
+
+            return _context.Vehiculos.Include(v => v.Modelo).Where(predicate).OrderByDescending(v => v.Id).Skip(skip).Take(take).ToList();
+
+
+
 
         }
     }

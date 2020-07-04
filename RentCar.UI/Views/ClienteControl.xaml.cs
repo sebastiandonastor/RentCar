@@ -46,6 +46,7 @@ namespace RentCar.UI.Views
 
         void LoadData(object sender, RoutedEventArgs e)
         {
+            this.cleanSelection();
             dataGrid.ItemsSource = _unitOfWork.Clientes.GetAll();
             tipoPersonaCombox.ItemsSource = _unitOfWork.TiposPersonas.GetAll();
 
@@ -95,10 +96,6 @@ namespace RentCar.UI.Views
         {
             isEdit = false;
             ClienteSelected = new Cliente();
-            nombre.Text = "";
-            cedula.Text = "";
-            tarjetaCredito.Text = "";
-            limiteCredito.Text = "";
 
             estados.SelectedIndex = -1;
 

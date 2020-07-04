@@ -62,6 +62,8 @@ namespace RentCar.UI.Views
 
         void LoadData(object sender, RoutedEventArgs e)
         {
+            this.cleanSelection();
+
             dataGrid.ItemsSource = _unitOfWork.Rentas.GetAll();
             vehiculoCombox.ItemsSource = _unitOfWork.Vehiculos.GetAll();
             clienteCombox.ItemsSource = _unitOfWork.Clientes.GetAll();
@@ -113,7 +115,7 @@ namespace RentCar.UI.Views
         void cleanSelection()
         {
             isEdit = false;
-            RentaSelected = new Renta();
+            RentaSelected = new Renta() { FechaRenta = DateTime.Now };
             estados.SelectedIndex = -1;
 
         }

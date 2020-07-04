@@ -54,6 +54,7 @@ namespace RentCar.UI.Views
 
         void LoadData()
         {
+            this.cleanSelection();
 
             var tiposVehiculos = _unitOfWork.TiposVehiculos.GetAll();
             dataGrid.ItemsSource = tiposVehiculos.ToList();

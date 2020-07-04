@@ -36,7 +36,11 @@
     Style="{StaticResource MaterialDesignHeadline3TextBlock}">
 Inspecciones
                 </TextBlock>
-                <DataGrid x:Name="dataGrid" Background="{StaticResource PrimaryHueMidBrush}" Margin="30 60 30 0" Grid.Row="0"  IsReadOnly="True" AutoGenerateColumns="false" ColumnWidth="*">
+                <DataGrid x:Name="dataGrid" Background="{StaticResource PrimaryHueMidBrush}"  Margin="30 60 30 0" Grid.Row="0"  
+                          IsReadOnly="True" AutoGenerateColumns="false" ColumnWidth="*"
+                            materialDesign:DataGridAssist.CellPadding="4 2 2 2"
+                          materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2"
+                          >
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
@@ -133,7 +137,7 @@ Inspecciones
 
                 <Label Content="Estado" Grid.Row="0" Grid.Column="3" Margin="0 25 0 0"/>
                 <ComboBox Name="estados" Grid.Row="1" Grid.Column="3" materialDesign:HintAssist.Hint="Elegir" 
-                          materialDesign:ComboBoxAssist.ClassicMode="true"  SelectionChanged="ComboBox_SelectionChanged" SelectedValuePath="Content" SelectedValue="{Binding InspeccionSelected.Estado, Mode=TwoWay}">
+                          materialDesign:ComboBoxAssist.ClassicMode="true"  SelectionChanged="ComboBox_SelectionChanged" SelectedValuePath="Content" >
                     <ComboBoxItem Tag="true">
                         Activo
                     </ComboBoxItem>

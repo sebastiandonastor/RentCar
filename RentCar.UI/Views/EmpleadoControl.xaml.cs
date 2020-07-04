@@ -54,6 +54,7 @@ namespace RentCar.UI.Views
 
         void LoadData(object sender, RoutedEventArgs e)
         {
+            this.cleanSelection();
             dataGrid.ItemsSource = _unitOfWork.Empleados.GetAll();
 
         }
@@ -102,13 +103,9 @@ namespace RentCar.UI.Views
         void cleanSelection()
         {
             isEdit = false;
-            EmpleadoSelected = new Empleado();
-            nombre.Text = "";
-            cedula.Text = "";
-            fechaIngreso.Text = null;
+            EmpleadoSelected = new Empleado() { FechaIngreso = DateTime.Now };
             estados.SelectedIndex = -1;
-            porcientoComision.Text = "";
-            tandaLabor.Text = "";
+
 
         }
 

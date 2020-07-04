@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dgx="clr-namespace:DataGridExtensions;assembly=DataGridExtensions"
              xmlns:local="clr-namespace:RentCar.UI.Views"
              mc:Ignorable="d" 
              Background="AliceBlue"
@@ -23,9 +24,9 @@
     <StackPanel Background="AliceBlue">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="300"/>
+                <RowDefinition Height="380"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -34,19 +35,41 @@
 
             <StackPanel Grid.Row="0" >
                 <TextBlock
+                    
                     Margin="30 30 0 0" Background="AliceBlue" HorizontalAlignment="Center"
     Style="{StaticResource MaterialDesignHeadline3TextBlock}">
 Vehiculos
                 </TextBlock>
-                <DataGrid x:Name="dataGrid" Background="{StaticResource PrimaryHueMidBrush}" Margin="30 60 30 0" Grid.Row="0"  IsReadOnly="True" AutoGenerateColumns="false" ColumnWidth="*">
+
+                <Label Content="Buscar" FontSize="10" HorizontalAlignment="Right" Margin="0,0,32.4,0" Width="96"/>
+                <TextBox Grid.Column="0"
+                         Name="buscador"
+                         KeyUp="Buscar_TextInput"
+                         IsEnabled="True"
+                         Background="WhiteSmoke"
+                    Width="100" HorizontalAlignment="Right" Margin="0,0,31.4,10"/>
+
+
+
+                <DataGrid x:Name="dataGrid"
+                          VerticalScrollBarVisibility="Visible"
+                          dgx:DataGridFilter.IsAutoFilterEnabled="True"
+                          Background="{StaticResource PrimaryHueMidBrush}" 
+                          Margin="30 0 30 0" Grid.Row="0"  IsReadOnly="True"
+                          AutoGenerateColumns="false" ColumnWidth="*"
+                          materialDesign:DataGridAssist.CellPadding="4 2 2 2"
+                          materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2"
+                          Foreground="White"
+                          >
+
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
                         <DataGridTextColumn Header="Descripcion" Binding="{Binding Descripcion}"/>
-                        <DataGridTextColumn Header="Chasis" Binding="{Binding Chasis}"/>
-                        <DataGridTextColumn Header="Motor" Binding="{Binding NoMotor}"/>
+                        <DataGridTextColumn Header="Chasis" Binding="{Binding Chasis}" />
+                        <DataGridTextColumn Header="Motor" Binding="{Binding NoMotor}" />
                         <DataGridTextColumn Header="No Placa" Binding="{Binding Placa}"/>
-                        <DataGridTextColumn Header="Tipo Vehiculo" Binding="{Binding TipoVehiculo.Descripcion}"/>
+                        <DataGridTextColumn Header="Tipo Vehiculo" Binding="{Binding TipoVehiculo.Descripcion}" />
                         <DataGridTextColumn Header="Marca" Binding="{Binding Marca.Description}"/>
                         <DataGridTextColumn Header="Modelo" Binding="{Binding Modelo.Descripcion}"/>
                         <DataGridTextColumn Header="Combustible" Binding="{Binding TipoCombustible.Descripcion}"/>
@@ -83,9 +106,36 @@ Vehiculos
                     </DataGrid.Columns>
 
                 </DataGrid>
+                <Grid HorizontalAlignment="Right">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
 
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" HorizontalAlignment="Right"
+  Style="{StaticResource MaterialDesignIconButton}"
+  ToolTip="MaterialDesignIconButton">
+                        <materialDesign:PackIcon
+    Kind="ChevronLeft" />
+                    </Button>
+                    <ComboBox Grid.Column="1"
+                              SelectionChanged="buscadorCombox_SelectionChanged"
+                              x:Name="buscadorCombox"
+                               materialDesign:HintAssist.Hint="Pagina Actual"
+    materialDesign:ComboBoxAssist.ClassicMode="true" 
+                              >
+
+                    </ComboBox>
+                    <Button Grid.Column="2"
+  Style="{StaticResource MaterialDesignIconButton}"
+  ToolTip="MaterialDesignIconButton">
+                        <materialDesign:PackIcon
+    Kind="ChevronRight" />
+                    </Button>
+                </Grid>
             </StackPanel>
-            <Grid Grid.Row="1" Margin="30 50 5 5">
+            <Grid Grid.Row="1" Margin="30 0 5 5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>

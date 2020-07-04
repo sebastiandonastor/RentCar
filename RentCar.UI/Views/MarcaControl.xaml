@@ -36,7 +36,9 @@
                     Margin="30 30 0 0" Background="AliceBlue" HorizontalAlignment="Center"
     Style="{StaticResource MaterialDesignHeadline3TextBlock}">
 Marcas</TextBlock>
-                <DataGrid x:Name="dataGrid" Background="{StaticResource PrimaryHueMidBrush}" Margin="30 60 30 0" Grid.Row="0"  IsReadOnly="True" AutoGenerateColumns="false" ColumnWidth="*">
+                <DataGrid x:Name="dataGrid" Background="{StaticResource PrimaryHueMidBrush}" Margin="30 60 30 0" Grid.Row="0"  IsReadOnly="True" AutoGenerateColumns="false" ColumnWidth="*"  
+                          materialDesign:DataGridAssist.CellPadding="4 2 2 2"
+                          materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
@@ -106,7 +108,7 @@ Marcas</TextBlock>
 
             <Grid Grid.Row="2">
                 <materialDesign:PopupBox Style="{StaticResource MaterialDesignMultiFloatingActionDarkPopupBox}"
-                                 HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                                 HorizontalAlignment="Right" VerticalAlignment="Top" 
                                  Margin="32" ToolTip="Acciones">
                     <StackPanel>
                         <Button ToolTip="Limpiar" Background="AliceBlue" Click="OnClear">

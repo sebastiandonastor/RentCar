@@ -47,7 +47,7 @@ namespace RentCar.UI.Views
 
         void LoadData()
         {
-
+            this.cleanSelection();
             var marcas = _unitOfWork.Marcas.GetAll();
             dataGrid.ItemsSource = marcas.ToList();
 

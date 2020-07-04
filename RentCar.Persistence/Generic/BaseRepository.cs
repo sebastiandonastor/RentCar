@@ -82,5 +82,34 @@ namespace RentCar.Persistence.Generic
         {
             return context.Set<TEntity>().Where(predicate).ToList();
         }
+
+
+
+        public int Total(Expression<Func<TEntity, bool>> predicate = null)
+        {
+            if (predicate == null)
+            {
+                return context.Set<TEntity>().Count();
+            }
+            else
+            {
+                return context.Set<TEntity>().Count(predicate);
+            }
+        }
+
+        public List<int> GetPages(int amountOfPages, Expression<Func<TEntity, bool>> predicate = null)
+        {
+            var total = Math.Ceiling((double)Total(predicate) / amountOfPages);
+
+            var pages = new List<int>();
+            for (int i = 0; i < total; i++)
+            {
+                pages.Add(i + 1);
+            }
+
+            return pages;
+        }
+
+
     }
 }

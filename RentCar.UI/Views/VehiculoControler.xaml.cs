@@ -1,23 +1,13 @@
 ﻿using RentCar.Entities.Models;
 using RentCar.Persistence.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace RentCar.UI.Views
 {
@@ -29,10 +19,10 @@ namespace RentCar.UI.Views
         bool isEdit = false;
         private readonly IUnitOfWork _unitOfWork;
 
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
-
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
@@ -61,11 +51,19 @@ namespace RentCar.UI.Views
 
         void LoadData(object sender, RoutedEventArgs e)
         {
-            dataGrid.ItemsSource = _unitOfWork.Vehiculos.GetAll();
+            this.cleanSelection();
+            this.getPagination(1);
             marcaCombobox.ItemsSource = _unitOfWork.Marcas.GetAll();
             tipoVehiculoCombox.ItemsSource = _unitOfWork.TiposVehiculos.GetAll();
             tipoCombustibleCombox.ItemsSource = _unitOfWork.TiposCombustibles.GetAll();
+        }
 
+        private void getPagination(int currentIndex)
+        {
+            var dataSource = _unitOfWork.Vehiculos.GetPaginatedCase((currentIndex - 1) * 5).ToList();
+            dataGrid.ItemsSource = dataSource;
+            buscadorCombox.ItemsSource = _unitOfWork.Vehiculos.GetPages(5);
+            buscadorCombox.SelectedItem = currentIndex;
         }
 
         private async void onSave(object sender, RoutedEventArgs e)
@@ -121,7 +119,6 @@ namespace RentCar.UI.Views
             if (estados.SelectedItem != null)
             {
                 VehiculoSelected.Estado = bool.Parse(((ComboBoxItem)estados.SelectedItem).Tag.ToString());
-
             }
         }
 
@@ -171,6 +168,36 @@ namespace RentCar.UI.Views
 
         }
 
+        private void Buscar_TextInput(object sender, KeyEventArgs e)
+        {
+            var busqueda = this.buscador.Text;
+            var id = ((int)buscadorCombox.SelectedItem);
+
+            if (String.IsNullOrWhiteSpace(busqueda))
+            {
+                this.getPagination(1);
+            }
+            else
+            {
+                var dataSource = _unitOfWork.Vehiculos.GetPaginatedCase((id - 1) * 5, 5,
+                    (v => v.Descripcion.Contains(busqueda) || v.Modelo.Descripcion.Contains(busqueda) || v.Marca.Description.Contains(busqueda))).ToList();
+                dataGrid.ItemsSource = dataSource;
+
+                buscadorCombox.ItemsSource = _unitOfWork.Vehiculos.GetPages(5,
+                    (v => v.Descripcion.Contains(busqueda) || v.Modelo.Descripcion.Contains(busqueda) || v.Marca.Description.Contains(busqueda)));
+
+            }
+        }
+
+        private void buscadorCombox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (buscadorCombox.SelectedItem != null)
+            {
+                var id = ((int)buscadorCombox.SelectedItem);
+                this.getPagination(id);
+
+            }
+        }
     }
 }
 

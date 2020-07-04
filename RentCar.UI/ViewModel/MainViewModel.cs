@@ -30,6 +30,12 @@ namespace RentCar.UI.ViewModel
             menuGestion.Add(new SubItem("Tipos de Combustible", PackIconKind.Fuel, new TipoCombustibleControl(_unitOfWork)));
             menuGestion.Add(new SubItem("Vehiculos", PackIconKind.Car, new VehiculoControler(_unitOfWork)));
 
+            var reportSubitems = new List<SubItem>();
+            reportSubitems.Add(new SubItem("Empleados", PackIconKind.AccountAlert, new ReportControl()));
+            reportSubitems.Add(new SubItem("Vehiculos", PackIconKind.CarDoor, new VentasReportControl()));
+            var item5 = new Item("Reporte", reportSubitems, PackIconKind.FileChart);
+
+
             var item4 = new Item("Renta", new RentaControl(_unitOfWork), PackIconKind.CarRental);
 
             var item3 = new Item("Inspeccion", new InspeccionControl(_unitOfWork), PackIconKind.Magnify);
@@ -43,6 +49,8 @@ namespace RentCar.UI.ViewModel
             window.Menu.Children.Add(new MenuItemControl(item2, window));
             window.Menu.Children.Add(new MenuItemControl(item3, window));
             window.Menu.Children.Add(new MenuItemControl(item4, window));
+            window.Menu.Children.Add(new MenuItemControl(item5, window));
+
 
 
         }

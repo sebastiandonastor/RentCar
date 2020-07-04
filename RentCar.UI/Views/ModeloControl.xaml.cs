@@ -47,6 +47,7 @@ namespace RentCar.UI.Views
 
         public ModeloControl(IUnitOfWork unitOfWork)
         {
+
             _unitOfWork = unitOfWork;
             InitializeComponent();
             this.DataContext = this;
@@ -57,6 +58,8 @@ namespace RentCar.UI.Views
 
         void LoadData(object sender, RoutedEventArgs e)
         {
+            this.cleanSelection();
+
             dataGrid.ItemsSource = _unitOfWork.Modelos.GetModelosWithMarcas().ToList();
 
             Marcas = _unitOfWork.Marcas.GetAll().ToList();

@@ -19,6 +19,10 @@ namespace RentCar.Persistence.Interfaces
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate);
 
+        int Total(Expression<Func<TEntity, bool>> predicate = null);
+
+        List<int> GetPages(int amountOfPages, Expression<Func<TEntity, bool>> predicate = null);
+
         Task AddAsync(TEntity entity);
         Task AddAllAsync(IEnumerable<TEntity> entities);
 

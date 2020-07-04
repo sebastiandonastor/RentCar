@@ -60,6 +60,7 @@ namespace RentCar.UI.Views
 
         void LoadData()
         {
+            this.cleanSelection();
 
             var tiposCombustibles = _unitOfWork.TiposCombustibles.GetAll();
             dataGrid.ItemsSource = tiposCombustibles.ToList();
