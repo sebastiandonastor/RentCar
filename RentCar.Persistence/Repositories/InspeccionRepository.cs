@@ -5,6 +5,7 @@ using RentCar.Persistence.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,6 +30,15 @@ namespace RentCar.Persistence.Repositories
             oldInspeccion.TieneRoturasCristal = newInspeccion.TieneRoturasCristal;
             oldInspeccion.Fecha = newInspeccion.Fecha;
 
+
+        }
+
+        public List<Inspeccion> GetPaginatedCase(int skip, int take = 5, Expression<Func<Inspeccion, bool>> predicate = null)
+        {
+            if (predicate == null)
+                return _context.Inspecciones.OrderByDescending(v => v.Id).Skip(skip).Take(take).ToList();
+
+            return _context.Inspecciones.Where(predicate).OrderByDescending(v => v.Id).Skip(skip).Take(take).ToList();
 
         }
     }

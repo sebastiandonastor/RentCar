@@ -5,8 +5,8 @@ using RentCar.Persistence.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
+
 
 namespace RentCar.Persistence.Repositories
 {
@@ -26,6 +26,15 @@ namespace RentCar.Persistence.Repositories
             oldCLiente.Cedula = recentCliente.Cedula;
             oldCLiente.Nombre = recentCliente.Nombre;
             oldCLiente.NoTarjetaCr = recentCliente.NoTarjetaCr;
+        }
+
+        public List<Cliente> GetPaginatedCase(int skip, int take = 5, Expression<Func<Cliente, bool>> predicate = null)
+        {
+            if (predicate == null)
+                return _context.Clientes.OrderByDescending(v => v.Id).Skip(skip).Take(take).ToList();
+
+            return _context.Clientes.Where(predicate).OrderByDescending(v => v.Id).Skip(skip).Take(take).ToList();
+
         }
     }
 }

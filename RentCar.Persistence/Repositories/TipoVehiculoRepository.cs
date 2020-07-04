@@ -24,5 +24,6 @@ namespace RentCar.Persistence.Repositories
             oldTipoVehiculo.Estado = newTipoVehiculo.Estado;
 
         }
+
     }
 }

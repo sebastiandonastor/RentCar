@@ -42,9 +42,6 @@ namespace RentCar.Persistence.Repositories
 
             return _context.Vehiculos.Include(v => v.Modelo).Where(predicate).OrderByDescending(v => v.Id).Skip(skip).Take(take).ToList();
 
-
-
-
         }
     }
 }

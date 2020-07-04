@@ -107,6 +107,9 @@ namespace RentCar.Persistence.Generic
                 pages.Add(i + 1);
             }
 
+            if (pages.Count == 0)
+                pages.Add(1);
+
             return pages;
         }
 

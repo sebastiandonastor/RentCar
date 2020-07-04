@@ -10,5 +10,6 @@ namespace RentCar.Persistence.Interfaces
     public interface ITipoVehiculoRepository : IBaseRepository<TipoVehiculo>
     {
         void Update(TipoVehiculo oldTipoVehiculo, TipoVehiculo newTipoVehiculo);
+
     }
 }

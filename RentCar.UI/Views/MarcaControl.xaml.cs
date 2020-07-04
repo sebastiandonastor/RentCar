@@ -48,9 +48,7 @@ namespace RentCar.UI.Views
         void LoadData()
         {
             this.cleanSelection();
-            var marcas = _unitOfWork.Marcas.GetAll();
-            dataGrid.ItemsSource = marcas.ToList();
-
+            this.getPagination(1);
         }
 
         private async void onSave(object sender, RoutedEventArgs e)
@@ -93,6 +91,46 @@ namespace RentCar.UI.Views
 
 
         }
+
+        private void getPagination(int currentIndex)
+        {
+            var dataSource = _unitOfWork.Marcas.GetPaginatedCase((currentIndex - 1) * 5).ToList();
+            dataGrid.ItemsSource = dataSource;
+            buscadorCombox.ItemsSource = _unitOfWork.Marcas.GetPages(5);
+            buscadorCombox.SelectedItem = currentIndex;
+        }
+
+
+        private void Buscar_TextInput(object sender, KeyEventArgs e)
+        {
+            var busqueda = this.buscador.Text;
+            var id = ((int)buscadorCombox.SelectedItem);
+
+            if (String.IsNullOrWhiteSpace(busqueda))
+            {
+                this.getPagination(1);
+            }
+            else
+            {
+                var dataSource = _unitOfWork.Marcas.GetPaginatedCase((id - 1) * 5, 5, (m => m.Description.Contains(busqueda)));
+                dataGrid.ItemsSource = dataSource;
+
+                buscadorCombox.ItemsSource = _unitOfWork.Marcas.GetPages(5, (m => m.Description.Contains(busqueda)));
+
+            }
+        }
+
+        private void buscadorCombox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (buscadorCombox.SelectedItem != null)
+            {
+                var id = ((int)buscadorCombox.SelectedItem);
+                this.getPagination(id);
+
+            }
+        }
+
+
 
         void cleanSelection()
         {
