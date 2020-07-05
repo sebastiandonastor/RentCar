@@ -18,6 +18,15 @@ namespace RentCar.Entities.Models
 
         public bool TieneGomaRespuesta { get; set; }
 
+        public bool EstadoGomaDelanteraDerecha { get; set; }
+
+        public bool EstadoGomaDelanteraIzquierda { get; set; }
+
+
+        public bool EstadoGomaTraseraDerecha { get; set; }
+
+        public bool EstadoGomaTraseraIzquierda { get; set; }
+
         public bool TieneGato { get; set; }
 
         public bool TieneRoturasCristal { get; set; }

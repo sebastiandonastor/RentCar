@@ -28,6 +28,11 @@ namespace RentCar.Persistence.Repositories
             oldInspeccion.TieneGomaRespuesta = newInspeccion.TieneGomaRespuesta;
             oldInspeccion.TieneRalladura = newInspeccion.TieneRalladura;
             oldInspeccion.TieneRoturasCristal = newInspeccion.TieneRoturasCristal;
+            oldInspeccion.EstadoGomaDelanteraDerecha = newInspeccion.EstadoGomaDelanteraDerecha;
+            oldInspeccion.EstadoGomaDelanteraIzquierda = newInspeccion.EstadoGomaDelanteraIzquierda;
+            oldInspeccion.EstadoGomaTraseraDerecha = newInspeccion.EstadoGomaTraseraDerecha;
+            oldInspeccion.EstadoGomaTraseraIzquierda = newInspeccion.EstadoGomaTraseraIzquierda;
+
             oldInspeccion.Fecha = newInspeccion.Fecha;
 
 

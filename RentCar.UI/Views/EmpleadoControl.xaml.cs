@@ -1,5 +1,6 @@
 ﻿using RentCar.Entities.Models;
 using RentCar.Persistence.Interfaces;
+using RentCar.UI.Validations;
 using RentCar.UI.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -55,15 +56,59 @@ namespace RentCar.UI.Views
         void LoadData(object sender, RoutedEventArgs e)
         {
             this.cleanSelection();
-            dataGrid.ItemsSource = _unitOfWork.Empleados.GetAll();
+            this.getPagination(1);
 
+        }
+
+        private void getPagination(int currentIndex)
+        {
+            var dataSource = _unitOfWork.Empleados.GetPaginatedCase((currentIndex - 1) * 5).ToList();
+            dataGrid.ItemsSource = dataSource;
+            buscadorCombox.ItemsSource = _unitOfWork.Empleados.GetPages(5);
+            buscadorCombox.SelectedItem = currentIndex;
+        }
+
+        private void Buscar_TextInput(object sender, KeyEventArgs e)
+        {
+            var busqueda = this.buscador.Text;
+            var id = ((int)buscadorCombox.SelectedItem);
+
+            if (String.IsNullOrWhiteSpace(busqueda))
+            {
+                this.getPagination(1);
+            }
+            else
+            {
+                var dataSource = _unitOfWork.Empleados.GetPaginatedCase((id - 1) * 5, 5,
+                    em => em.Nombre.Contains(busqueda) || em.Cedula.Contains(busqueda)).ToList();
+                dataGrid.ItemsSource = dataSource;
+
+                buscadorCombox.ItemsSource = _unitOfWork.Empleados.GetPages(5,
+                    em => em.Nombre.Contains(busqueda) || em.Cedula.Contains(busqueda)).ToList();
+
+            }
+        }
+
+        private void buscadorCombox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (buscadorCombox.SelectedItem != null)
+            {
+                var id = ((int)buscadorCombox.SelectedItem);
+                this.getPagination(id);
+
+            }
         }
 
         private async void onSave(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrWhiteSpace(EmpleadoSelected.Nombre))
+
+            var validation = new EmpleadoValidation();
+            var result = validation.Validate(EmpleadoSelected);
+            if (!result.IsValid)
             {
-                MessageBox.Show("Por favor ingrese una descripcion valida", "Error");
+
+                MessageBox.Show(string.Join("\n", result.Errors.Select(r => r.ErrorMessage)), "Errores");
+
             }
             else
             {

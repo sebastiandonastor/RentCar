@@ -1,5 +1,6 @@
 ﻿using RentCar.Entities.Models;
 using RentCar.Persistence.Interfaces;
+using RentCar.UI.Validations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -63,19 +64,64 @@ namespace RentCar.UI.Views
         void LoadData(object sender, RoutedEventArgs e)
         {
             this.cleanSelection();
-
-            dataGrid.ItemsSource = _unitOfWork.Rentas.GetAll();
-            vehiculoCombox.ItemsSource = _unitOfWork.Vehiculos.GetAll();
+            this.getPagination(1);
+            vehiculoCombox.ItemsSource = _unitOfWork.Vehiculos.GetAll(v => !v.Rentas.Any(r => r.FechaDevolucion == null));
             clienteCombox.ItemsSource = _unitOfWork.Clientes.GetAll();
             empleadoCombox.ItemsSource = _unitOfWork.Empleados.GetAll();
 
         }
 
+        private void getPagination(int currentIndex)
+        {
+            var dataSource = _unitOfWork.Rentas.GetPaginatedCase((currentIndex - 1) * 5).ToList();
+            dataGrid.ItemsSource = dataSource;
+            buscadorCombox.ItemsSource = _unitOfWork.Vehiculos.GetPages(5);
+            buscadorCombox.SelectedItem = currentIndex;
+        }
+
+
+
+        private void Buscar_TextInput(object sender, KeyEventArgs e)
+        {
+            var busqueda = this.buscador.Text;
+            var id = ((int)buscadorCombox.SelectedItem);
+
+            if (String.IsNullOrWhiteSpace(busqueda))
+            {
+                this.getPagination(1);
+            }
+            else
+            {
+                var dataSource = _unitOfWork.Rentas.GetPaginatedCase((id - 1) * 5, 5,
+                    r => r.Comentario.Contains(busqueda) || r.Empleado.Nombre.Contains(busqueda) || r.Vehiculo.Descripcion.Contains(busqueda)).ToList();
+                dataGrid.ItemsSource = dataSource;
+
+                buscadorCombox.ItemsSource = _unitOfWork.Rentas.GetPages(5,
+                    r => r.Comentario.Contains(busqueda) || r.Empleado.Nombre.Contains(busqueda) || r.Vehiculo.Descripcion.Contains(busqueda));
+
+            }
+        }
+
+        private void buscadorCombox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (buscadorCombox.SelectedItem != null)
+            {
+                var id = ((int)buscadorCombox.SelectedItem);
+                this.getPagination(id);
+
+            }
+        }
+
         private async void onSave(object sender, RoutedEventArgs e)
         {
-            if (RentaSelected.MontoDiario <= 0)
+
+            var validation = new RentaValidation();
+            var result = validation.Validate(RentaSelected);
+            if (!result.IsValid)
             {
-                MessageBox.Show("Por favor ingrese una Monto Diario valida", "Error");
+
+                MessageBox.Show(string.Join("\n", result.Errors.Select(r => r.ErrorMessage)), "Errores");
+
             }
             else
             {
@@ -145,6 +191,11 @@ namespace RentCar.UI.Views
             isEdit = true;
             var id = int.Parse(((Button)sender).Tag.ToString());
             var entity = await _unitOfWork.Rentas.GetAsync(id);
+            var vehiculos = _unitOfWork.Vehiculos.GetAll(v => !v.Rentas.Any(r => r.FechaDevolucion == null)).ToList();
+            if (vehiculos.Count(v => v.Id == entity.Vehiculo.Id) == 0)
+                vehiculos.Add(entity.Vehiculo);
+
+            vehiculoCombox.ItemsSource = vehiculos;
             RentaSelected = entity;
         }
 

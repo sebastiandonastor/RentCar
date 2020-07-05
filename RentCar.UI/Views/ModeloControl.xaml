@@ -35,7 +35,17 @@
                     Margin="30 30 0 0" Background="AliceBlue" HorizontalAlignment="Center"
     Style="{StaticResource MaterialDesignHeadline3TextBlock}">
 Modelos</TextBlock>
-                <DataGrid x:Name="dataGrid" Background="{StaticResource PrimaryHueMidBrush}" Margin="30 60 30 0" Grid.Row="0" 
+
+
+                <Label Content="Buscar" FontSize="10" HorizontalAlignment="Right" Margin="0,0,32.4,0" Width="96"/>
+                <TextBox Grid.Column="0"
+                         Name="buscador"
+                         KeyUp="Buscar_TextInput"
+                         IsEnabled="True"
+                         Background="WhiteSmoke"
+                    Width="100" HorizontalAlignment="Right" Margin="0,0,31.4,10"/>
+
+                <DataGrid x:Name="dataGrid" Background="{StaticResource PrimaryHueMidBrush}" Margin="30 0 30 0" Grid.Row="0" 
                           IsReadOnly="True" AutoGenerateColumns="false" ColumnWidth="*"
                             materialDesign:DataGridAssist.CellPadding="4 2 2 2"
                           materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2"
@@ -74,7 +84,34 @@ Modelos</TextBlock>
                     </DataGrid.Columns>
 
                 </DataGrid>
+                <Grid HorizontalAlignment="Right">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
 
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" HorizontalAlignment="Right"
+  Style="{StaticResource MaterialDesignIconButton}"
+  ToolTip="MaterialDesignIconButton">
+                        <materialDesign:PackIcon
+    Kind="ChevronLeft" />
+                    </Button>
+                    <ComboBox Grid.Column="1"
+                              SelectionChanged="buscadorCombox_SelectionChanged"
+                              x:Name="buscadorCombox"
+                               materialDesign:HintAssist.Hint="Pagina Actual"
+    materialDesign:ComboBoxAssist.ClassicMode="true" 
+                              >
+
+                    </ComboBox>
+                    <Button Grid.Column="2"
+  Style="{StaticResource MaterialDesignIconButton}"
+  ToolTip="MaterialDesignIconButton">
+                        <materialDesign:PackIcon
+    Kind="ChevronRight" />
+                    </Button>
+                </Grid>
             </StackPanel>
             <Grid Grid.Row="1" Margin="30 100 5 5" DataContext="{Binding ModeloSelected}">
                 <Grid.ColumnDefinitions>

@@ -1,9 +1,11 @@
 ﻿using RentCar.Entities.Models;
 using RentCar.Persistence.Interfaces;
+using RentCar.UI.Validations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -42,21 +44,65 @@ namespace RentCar.UI.Views
             this.Loaded += LoadData;
 
         }
+        private void getPagination(int currentIndex)
+        {
+            var dataSource = _unitOfWork.Clientes.GetPaginatedCase((currentIndex - 1) * 5).ToList();
+            dataGrid.ItemsSource = dataSource;
+            buscadorCombox.ItemsSource = _unitOfWork.Clientes.GetPages(5);
+            buscadorCombox.SelectedItem = currentIndex;
+        }
 
+
+
+        private void Buscar_TextInput(object sender, KeyEventArgs e)
+        {
+            var busqueda = this.buscador.Text;
+            var id = ((int)buscadorCombox.SelectedItem);
+
+            if (String.IsNullOrWhiteSpace(busqueda))
+            {
+                this.getPagination(1);
+            }
+            else
+            {
+                var dataSource = _unitOfWork.Clientes.GetPaginatedCase((id - 1) * 5, 5,
+                    (c => c.Nombre.Contains(busqueda))).ToList();
+                dataGrid.ItemsSource = dataSource;
+
+                buscadorCombox.ItemsSource = _unitOfWork.Clientes.GetPages(5,
+                    (c => c.Nombre.Contains(busqueda)));
+
+            }
+        }
+
+        private void buscadorCombox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (buscadorCombox.SelectedItem != null)
+            {
+                var id = ((int)buscadorCombox.SelectedItem);
+                this.getPagination(id);
+
+            }
+        }
 
         void LoadData(object sender, RoutedEventArgs e)
         {
             this.cleanSelection();
-            dataGrid.ItemsSource = _unitOfWork.Clientes.GetAll();
+            this.getPagination(1);
             tipoPersonaCombox.ItemsSource = _unitOfWork.TiposPersonas.GetAll();
 
         }
 
         private async void onSave(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrWhiteSpace(ClienteSelected.Nombre))
+
+            var validation = new ClienteValidation();
+            var result = validation.Validate(ClienteSelected);
+            if (!result.IsValid)
             {
-                MessageBox.Show("Por favor ingrese una descripcion valida", "Error");
+
+                MessageBox.Show(string.Join("\n", result.Errors.Select(r => r.ErrorMessage)), "Errores");
+
             }
             else
             {

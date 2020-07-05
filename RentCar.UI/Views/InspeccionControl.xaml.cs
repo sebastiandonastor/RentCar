@@ -1,5 +1,6 @@
 ﻿using RentCar.Entities.Models;
 using RentCar.Persistence.Interfaces;
+using RentCar.UI.Validations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -56,11 +57,54 @@ namespace RentCar.UI.Views
 
         }
 
+        private void getPagination(int currentIndex)
+        {
+            var dataSource = _unitOfWork.Inspecciones.GetPaginatedCase((currentIndex - 1) * 5).ToList();
+            dataGrid.ItemsSource = dataSource;
+            buscadorCombox.ItemsSource = _unitOfWork.Inspecciones.GetPages(5);
+            buscadorCombox.SelectedItem = currentIndex;
+        }
+
+
+
+        private void Buscar_TextInput(object sender, KeyEventArgs e)
+        {
+            var busqueda = this.buscador.Text;
+            var id = ((int)buscadorCombox.SelectedItem);
+
+            if (String.IsNullOrWhiteSpace(busqueda))
+            {
+                this.getPagination(1);
+            }
+            else
+            {
+                var dataSource = _unitOfWork.Inspecciones.GetPaginatedCase((id - 1) * 5, 5,
+                    (i => i.Empleado.Nombre.Contains(busqueda) || i.Vehiculo.Descripcion.Contains(busqueda) || i.Cliente.Nombre.Contains(busqueda))).ToList();
+                dataGrid.ItemsSource = dataSource;
+
+                buscadorCombox.ItemsSource = _unitOfWork.Inspecciones.GetPages(5,
+                    (i => i.Empleado.Nombre.Contains(busqueda) || i.Vehiculo.Descripcion.Contains(busqueda) || i.Cliente.Nombre.Contains(busqueda)));
+
+            }
+        }
+
+        private void buscadorCombox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (buscadorCombox.SelectedItem != null)
+            {
+                var id = ((int)buscadorCombox.SelectedItem);
+                this.getPagination(id);
+
+            }
+        }
+
+
+
 
         void LoadData(object sender, RoutedEventArgs e)
         {
             this.cleanSelection();
-            dataGrid.ItemsSource = _unitOfWork.Inspecciones.GetAll();
+            this.getPagination(1);
             vehiculoCombox.ItemsSource = _unitOfWork.Vehiculos.GetAll();
             clienteCombox.ItemsSource = _unitOfWork.Clientes.GetAll();
             empleadoCombox.ItemsSource = _unitOfWork.Empleados.GetAll();
@@ -70,32 +114,44 @@ namespace RentCar.UI.Views
         private async void onSave(object sender, RoutedEventArgs e)
         {
 
-            try
+            var validation = new InspeccionValidation();
+            var result = validation.Validate(InspeccionSelected);
+            if (!result.IsValid)
             {
-                if (IsEdit)
+
+                MessageBox.Show(string.Join("\n", result.Errors.Select(r => r.ErrorMessage)), "Errores");
+
+            }
+            else
+            {
+                try
                 {
-                    var oldEntity = await _unitOfWork.Inspecciones.GetAsync(InspeccionSelected.Id);
-                    _unitOfWork.Inspecciones.Update(oldEntity, InspeccionSelected);
-                    await _unitOfWork.CompleteAsync();
+                    if (IsEdit)
+                    {
+                        var oldEntity = await _unitOfWork.Inspecciones.GetAsync(InspeccionSelected.Id);
+                        _unitOfWork.Inspecciones.Update(oldEntity, InspeccionSelected);
+                        await _unitOfWork.CompleteAsync();
+                    }
+                    else
+                    {
+
+                        await _unitOfWork.Inspecciones.AddAsync(InspeccionSelected);
+                        await _unitOfWork.CompleteAsync();
+                    }
                 }
-                else
+                catch (Exception)
                 {
 
-                    await _unitOfWork.Inspecciones.AddAsync(InspeccionSelected);
-                    await _unitOfWork.CompleteAsync();
+                    throw;
+                }
+                finally
+                {
+
+                    cleanSelection();
+                    LoadData(sender, e);
                 }
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
-            finally
-            {
-
-                cleanSelection();
-                LoadData(sender, e);
-            }
 
 
 
@@ -107,8 +163,6 @@ namespace RentCar.UI.Views
             this.IsEdit = false;
             InspeccionSelected = new Inspeccion() { Fecha = DateTime.Now };
             estados.SelectedIndex = -1;
-
-
 
         }
 

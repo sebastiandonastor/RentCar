@@ -1,5 +1,6 @@
 ﻿using RentCar.Entities.Models;
 using RentCar.Persistence.Interfaces;
+using RentCar.UI.Validations;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -68,9 +69,14 @@ namespace RentCar.UI.Views
 
         private async void onSave(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrWhiteSpace(VehiculoSelected.Descripcion))
+
+            var validation = new VehiculoValidation();
+            var result = validation.Validate(VehiculoSelected);
+            if (!result.IsValid)
             {
-                MessageBox.Show("Por favor ingrese una descripcion valida", "Error");
+
+                MessageBox.Show(string.Join("\n", result.Errors.Select(r => r.ErrorMessage)), "Errores");
+
             }
             else
             {

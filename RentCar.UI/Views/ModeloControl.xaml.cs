@@ -1,5 +1,6 @@
 ﻿using RentCar.Entities.Models;
 using RentCar.Persistence.Interfaces;
+using RentCar.UI.Validations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,19 +60,64 @@ namespace RentCar.UI.Views
         void LoadData(object sender, RoutedEventArgs e)
         {
             this.cleanSelection();
-
-            dataGrid.ItemsSource = _unitOfWork.Modelos.GetModelosWithMarcas().ToList();
+            this.getPagination(1);
 
             Marcas = _unitOfWork.Marcas.GetAll().ToList();
             marcaCombox.ItemsSource = Marcas;
 
         }
 
+        private void getPagination(int currentIndex)
+        {
+            var dataSource = _unitOfWork.Modelos.GetPaginatedCase((currentIndex - 1) * 5).ToList();
+            dataGrid.ItemsSource = dataSource;
+            buscadorCombox.ItemsSource = _unitOfWork.Modelos.GetPages(5);
+            buscadorCombox.SelectedItem = currentIndex;
+        }
+
+
+
+        private void Buscar_TextInput(object sender, KeyEventArgs e)
+        {
+            var busqueda = this.buscador.Text;
+            var id = ((int)buscadorCombox.SelectedItem);
+
+            if (String.IsNullOrWhiteSpace(busqueda))
+            {
+                this.getPagination(1);
+            }
+            else
+            {
+                var dataSource = _unitOfWork.Modelos.GetPaginatedCase((id - 1) * 5, 5,
+                    m => m.Descripcion.Contains(busqueda) || m.Marca.Description.Contains(busqueda)).ToList();
+                dataGrid.ItemsSource = dataSource;
+
+                buscadorCombox.ItemsSource = _unitOfWork.Vehiculos.GetPages(5,
+                    m => m.Descripcion.Contains(busqueda) || m.Marca.Description.Contains(busqueda)).ToList();
+
+            }
+        }
+
+        private void buscadorCombox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (buscadorCombox.SelectedItem != null)
+            {
+                var id = ((int)buscadorCombox.SelectedItem);
+                this.getPagination(id);
+
+            }
+        }
+
         private async void onSave(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrWhiteSpace(ModeloSelected.Descripcion))
+
+            var validation = new ModeloValidation();
+            var result = validation.Validate(ModeloSelected);
+            if (!result.IsValid)
             {
-                MessageBox.Show("Por favor ingrese una descripcion valida", "Error");
+
+                MessageBox.Show(string.Join("\n", result.Errors.Select(r => r.ErrorMessage)), "Errores");
+
             }
             else
             {
